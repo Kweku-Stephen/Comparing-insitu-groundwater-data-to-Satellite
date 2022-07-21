@@ -53,53 +53,58 @@ date_time_conv <- function(data = "", col = ""){
   return(data)
 }
 
-require(magrittr)
-# Initializing nodes (4 workers) using the Socket backend connection
-cl <- parallel::makeCluster(
-  spec = parallel::detectCores(logical = FALSE), 
-  type = "PSOCK"
-)
-
-# Evaluating libraries and functions on all nodes
-parallel::clusterEvalQ(
-  # cluster of 4 nodes
-  cl,
-  #Evaluating the conversion to date and date-time function on all nodes
-  date_time_conv <- function(data = "", col = ""){
-    # condition for checking class of "col"
-    if(class(col) != "character") stop("col must be a character")
-    # condition for transforming dates-like objects to date ans date-time object in R
-    ifelse(any(grep("\\:", data[ ,"Timestamps"])) == TRUE,
-           data[ ,col] <- as.POSIXct(data[ ,col], format = "%m/%d/%y %H:%M:%S"),
-           data[ ,col] <- as.POSIXct(data[ ,col], format = "%d/%m/%y")
-    )
-    # Returning output
-    return(data)
-  }
-)
-
-# Exporting data objects to the global environment of all 4 nodes
-parallel::clusterExport(cl, "Stations")
-
-# Running the function date_time_conv in parallel on all datasets in the list "Stations"
-Stations %<>% parallel::clusterApplyLB(
-  cl, 
-  ., 
-  date_time_conv, 
-  col = "Timestamps"
-)
-
-# Renaming all elements of the output
+# Converting all datetime-like character class of each element of the list to date/dase-time class
 Stations %<>% 
-  setNames(dir(path = "New folder/"))
+  lapply(date_time_conv, col = "Timestamps")
+
+
+#require(magrittr)
+# # Initializing nodes (4 workers) using the Socket backend connection
+# cl <- parallel::makeCluster(
+#   spec = parallel::detectCores(logical = FALSE), 
+#   type = "PSOCK"
+# )
+# 
+# # Evaluating libraries and functions on all nodes
+# parallel::clusterEvalQ(
+#   # cluster of 4 nodes
+#   cl,
+#   #Evaluating the conversion to date and date-time function on all nodes
+#   date_time_conv <- function(data = "", col = ""){
+#     # condition for checking class of "col"
+#     if(class(col) != "character") stop("col must be a character")
+#     # condition for transforming dates-like objects to date ans date-time object in R
+#     ifelse(any(grep("\\:", data[ ,"Timestamps"])) == TRUE,
+#            data[ ,col] <- as.POSIXct(data[ ,col], format = "%m/%d/%y %H:%M:%S"),
+#            data[ ,col] <- as.POSIXct(data[ ,col], format = "%d/%m/%y")
+#     )
+#     # Returning output
+#     return(data)
+#   }
+# )
+
+# # Exporting data objects to the global environment of all 4 nodes
+# parallel::clusterExport(cl, "Stations")
+# 
+# # Running the function date_time_conv in parallel on all datasets in the list "Stations"
+# Stations %<>% parallel::clusterApply(
+#   cl, 
+#   ., 
+#   date_time_conv, 
+#   col = "Timestamps"
+# )
+# 
+# # Renaming all elements of the output
+# Stations %<>% 
+#   setNames(dir(path = "New folder/"))
 
 
 # Computing mean Rainfall, soil moisture, relative humidity and Soi Temperature conditioned by hours####
 
 
 
-# stop cluster
-parallel::stopCluster(cl)
+# # stop cluster
+# parallel::stopCluster(cl)
 
 
 
