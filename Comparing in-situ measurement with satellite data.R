@@ -94,7 +94,7 @@ Stations %<>%
   setNames(dir(path = "New folder/"))
 
 
-# Computing mean Rainfall, soil moisture, relative humidity and Soi Temperature ####
+# Computing mean Rainfall, soil moisture, relative humidity and Soi Temperature conditioned by hours####
 
 
 
