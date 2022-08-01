@@ -107,22 +107,6 @@ lapply(
 
 
 
-
-
-
-
-
-
-
-
-
-
-ifelse(class(a) %in% "character", gsub("\\*|^\\s*$|\\*", NA, a), stop("now"))
-
-if (class(vec) == "character") {
-  vec[grep("[:punct:]|[ \t\n\r\f\v]", vec, value = TRUE)] <- NA
-} else vec
-
 # if your computer/hardware is constrained bcos you are using a single thread/core, you can 
     # uncheck the code chunck below make use of the multi-core properties of your machine by 
     # tweaking certain parameters such as logical argument and the workhorse function: clusterApply.
