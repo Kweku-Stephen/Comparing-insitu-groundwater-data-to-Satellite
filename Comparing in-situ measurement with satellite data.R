@@ -50,8 +50,8 @@ date_time_conv <- function(data = "", col = ""){
   if(class(col) != "character") stop("col must be a character")
   # condition for transforming dates-like objects to date ans date-time object in R
   ifelse(any(grep("\\:", data[ ,"Timestamps"])) == TRUE,
-         data[ ,col] <- as.POSIXct(data[ ,col], format = "%m/%d/%y %H:%M:%S"),
-         data[ ,col] <- as.POSIXct(data[ ,col], format = "%d/%m/%y")
+         data[ ,col] <- as.POSIXct(data[ ,col], format = "%m/%d/%Y %H:%M"),
+         data[ ,col] <- as.POSIXct(data[ ,col], format = "%d/%m/%Y")
   )
   # Returning output
   return(data)
@@ -85,9 +85,43 @@ lapply(
 
 # Targeting only the element "Varenpare.csv" because its the only variable to return TRUE for the 
     #condition above
-if (class())
+lapply(
+  Stations[["Varenpare.csv"]],
+  
+  \(vec = "") {
+    if (mode(vec) %in% "character") as.numeric(gsub("\\*|^\\s*$", NA, vec))
+    else vec
+  }
+) |> 
+  cbind.data.frame()-> Stations[["Varenpare.csv"]]
 
 
+# lapply(
+#   Stations[["Varenpare.csv"]],
+#   \(vec = "") if (!isa(vec, what = "character")) gsub("\\*|^\\s*$", NA, vec) else vec
+# )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ifelse(class(a) %in% "character", gsub("\\*|^\\s*$|\\*", NA, a), stop("now"))
+
+if (class(vec) == "character") {
+  vec[grep("[:punct:]|[ \t\n\r\f\v]", vec, value = TRUE)] <- NA
+} else vec
 
 # if your computer/hardware is constrained bcos you are using a single thread/core, you can 
     # uncheck the code chunck below make use of the multi-core properties of your machine by 
