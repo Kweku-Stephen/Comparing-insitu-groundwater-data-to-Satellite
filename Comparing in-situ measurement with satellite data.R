@@ -5,6 +5,7 @@ if(paste(version[["major"]], version[["minor"]], sep = ".") != "4.2.0") {
 } else message("R up to date")
   
 
+
 # Creating Directories for output plots and data ####
 for ( i in c("Data_outputs", "Plots_outputs")){
   if (!dir.exists(i)) dir.create(i) else message("Directory already Created")
@@ -22,12 +23,14 @@ if (length(intersect) >= 1) {
 } else message("packages already existing") # could be better
 
 
+
 # Unziping file ####
 dir(pattern = ".7z$") |> 
   archive::archive_extract() 
 
 # # Unlinking/deleting the zipped file
 # unlink(grep(".7z$", dir(), value = TRUE))
+
 
 
 # Reading in all unarchived datasets into R ####
@@ -38,6 +41,7 @@ dir(path = "New folder/", pattern = ".csv$", full.names = TRUE) |>
     "Timestamps"
   ) |> 
   setNames(dir(path = "New folder", pattern = "csv$")) -> Stations
+
 
 
 # function to Conversion timestamps to R date and date-time objects ####
@@ -53,10 +57,41 @@ date_time_conv <- function(data = "", col = ""){
   return(data)
 }
 
-# Converting all datetime-like character class of each element of the list to date/dase-time class
-Stations %<>% 
-  lapply(date_time_conv, col = "Timestamps")
 
+
+# Converting all datetime-like character class of each element of the list to date/date-time class
+Stations |>  
+  lapply(
+    date_time_conv, 
+    col = "Timestamps"
+  ) |> 
+  lapply(
+    # Function to loop over each element of the input data; which is a list
+    \(data = "") if(ncol(data) > 3) {
+      data[grep("Timestamps|rr|rh|sm|st", colnames(data), value = TRUE, perl = TRUE)]
+    } else data
+  ) -> Stations
+
+
+
+# checking the class of variables in every element of the list "Stations"
+# we only want date-times and numerics
+ischaracter <- function(data = "") sapply(data, is.character)
+
+# Looping the above function on all elements of the list "Stations"
+lapply(
+  Stations, \(data) any(ischaracter(data))
+)
+
+# Targeting only the element "Varenpare.csv" because its the only variable to return TRUE for the 
+    #condition above
+if (class())
+
+
+
+# if your computer/hardware is constrained bcos you are using a single thread/core, you can 
+    # uncheck the code chunck below make use of the multi-core properties of your machine by 
+    # tweaking certain parameters such as logical argument and the workhorse function: clusterApply.
 
 #require(magrittr)
 # # Initializing nodes (4 workers) using the Socket backend connection
@@ -99,14 +134,11 @@ Stations %<>%
 #   setNames(dir(path = "New folder/"))
 
 
-# Computing mean Rainfall, soil moisture, relative humidity and Soi Temperature conditioned by hours####
-
-
-
 # # stop cluster
 # parallel::stopCluster(cl)
 
 
+# Computing mean Rainfall, soil moisture, relative humidity and Soi Temperature conditioned by hours####
 
 
 
